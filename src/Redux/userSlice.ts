@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { userType } from "../Types";
 
-export const userStorageName = "superhero_user";
+export const userStorageName = "___userStorage";
 
 export const defaultUser: userType = {
   id: "",
@@ -13,9 +13,14 @@ export const defaultUser: userType = {
   lastSeen: "",
   bio: "",
 };
-const initialState = {
+
+type InitialStateType = {
+  curentUser: userType | null;
+};
+
+const initialState: InitialStateType = {
   // user:[],
-  currenUser: defaultUser,
+  curentUser: null,
   // currentSelectedUser:null
 };
 
@@ -28,9 +33,9 @@ const userSlice = createSlice({
 
       // store user in local storage
 
-      localStorage.setItem("userStorageName", JSON.stringify(user));
+      localStorage.setItem(userStorageName, JSON.stringify(user));
       // set login user
-      state.currenUser = user;
+      state.curentUser = user;
     },
     setUsers: (state, action) => {
       //  set all users

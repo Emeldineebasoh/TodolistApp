@@ -31,11 +31,13 @@ const Login = () => {
     BE_signUp(data, setSignUpLoading, reset, goTo, dispatch);
     auth(data, BE_signUp, setSignUpLoading);
   };
+
   const handleSignin = () => {
     const data = { email, password };
     Be_signIn(data, setSignInLoading, reset, goTo, dispatch);
     auth(data, Be_signIn, setSignInLoading);
   };
+
   const auth = (
     data: authDataType,
     func: any,

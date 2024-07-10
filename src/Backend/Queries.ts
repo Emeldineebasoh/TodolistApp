@@ -58,19 +58,25 @@ export const BE_signUp = (
           // generate user avatar with username
           const imgLink = AvatarGenerator(user.email?.split("@")[0]);
 
-          const userInfo = await addUserToCollection(
+          addUserToCollection(
             user.uid,
             user.email || "",
             user.email?.split("@")[0] || "",
             imgLink
-          );
+          ).then((userInfo) => {
+            // set user in store
+            dispatch(setUser(userInfo));
 
-          // set user in store
-          dispatch(setUser(userInfo));
+            setLoading(false);
+            reset();
+            goTo("/dashboard");
+          });
+          // // set user in store
+          // dispatch(setUser(userInfo));
 
-          setLoading(false);
-          reset();
-          goTo("/dashboard");
+          // setLoading(false);
+          // reset();
+          // goTo("/dashboard");
         })
         .catch((err) => {
           CatchErr(err);
@@ -94,20 +100,19 @@ export const Be_signIn = (
 
   signInWithEmailAndPassword(auth, email, password)
     .then(async ({ user }) => {
-      console.log(user);
-      // updatate user isOnline to true
+      //   updatate user isOnline to true
 
-      // await updateUserInfo({ id: user.uid, isOnline: true });
-
+      await updateUserInfo({ id: user.uid, isOnline: true });
       // get user info
-      // const userInfo = await getUserInfo(user.uid);
+      const userInfo = await getUserInfo(user.uid);
+      console.log(userInfo);
 
-      // set user in store
-      // dispatch(setUser(userInfo));
+      //   set user in store
+      dispatch(setUser(userInfo));
 
-      // setLoading(false);
-      // reset();
-      // goTo("/dashboard");
+      setLoading(false);
+      reset();
+      goTo("/dashboard");
     })
     .catch((err) => {
       CatchErr(err);
@@ -140,7 +145,7 @@ export const Be_signOut = (
 };
 // add user to collection
 export const getStorageUser = () => {
-  const usr = localStorage.getItem("userStorageName");
+  const usr = localStorage.getItem(userStorageName);
   if (usr) return JSON.parse(usr);
   else return null;
 };
@@ -151,7 +156,7 @@ const addUserToCollection = async (
   username: string,
   img: string
 ) => {
-  await setDoc(doc(db, "usersColl", "id"), {
+  await setDoc(doc(db, userColl, id), {
     isOnline: true,
     img,
     username,
@@ -161,7 +166,6 @@ const addUserToCollection = async (
     bio: `Hi my name is ${username},thanks to Desmond i understand React and TypeScript now, and i'm 
     confortable working with them. I can also build beautiful user interface`,
   });
-
   return getUserInfo(id);
 };
 // get user information
@@ -210,6 +214,7 @@ const updateUserInfo = async ({
     id = getStorageUser().id;
   }
 
+  console.log(id);
   if (id) {
     // set the "capital" field of the city "DC"
     await updateDoc(doc(db, userColl, id), {
